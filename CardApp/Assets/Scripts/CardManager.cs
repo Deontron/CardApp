@@ -12,7 +12,7 @@ public class CardManager : MonoBehaviour
     void Start()
     {
         ShuffleCards();
-        SetCards(26);
+        SetCards(5);
         StartCoroutine(Timer());
     }
 
@@ -61,17 +61,35 @@ public class CardManager : MonoBehaviour
 
     private void SortCards()
     {
-        GameObject currentList = cardLists[lastListId];
+        int tempListId = lastListId;
+
+        if (cardLists.Count == 2)
+        {
+            if (lastListId == 0)
+            {
+                tempListId = 1;
+            }
+            else
+            {
+                tempListId = 0;
+            }
+        }
+        else if (cardLists.Count < 2)
+        {
+            return;
+        }
+
+        GameObject currentList = cardLists[tempListId];
         int childCount = currentList.transform.childCount;
 
-        cardLists.RemoveAt(lastListId);
+        cardLists.RemoveAt(tempListId);
 
         for (int i = 0; i < childCount; i++)
         {
-            Transform tempList = currentList.transform.GetChild(0);
-            tempList.SetParent(cardLists[((i % cardLists.Count) + lastListId) % cardLists.Count].transform);
-            tempList.position = tempList.parent.position;
-            lastListId = i % cardLists.Count;
+            Transform tempCard = currentList.transform.GetChild(0);
+            tempCard.SetParent(cardLists[((i % cardLists.Count) + tempListId) % cardLists.Count].transform);
+            tempCard.position = tempCard.parent.position;
+            lastListId = ((i % cardLists.Count) + tempListId) % cardLists.Count;
         }
     }
 
@@ -79,7 +97,7 @@ public class CardManager : MonoBehaviour
     {
         for (int i = 0; i < 10; i++)
         {
-            yield return new WaitForSeconds(5);
+            yield return new WaitForSeconds(3);
             SortCards();
         }
     }
