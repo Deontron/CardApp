@@ -16,11 +16,6 @@ public class CardManager : MonoBehaviour
         StartCoroutine(Timer());
     }
 
-    void Update()
-    {
-
-    }
-
     private void ShuffleCards()
     {
         Card temp;
@@ -76,12 +71,19 @@ public class CardManager : MonoBehaviour
         }
         else if (cardLists.Count < 2)
         {
+            StopAllCoroutines();
+            GameObject tmpList = new GameObject();
+            cardLists.Add(tmpList);
+            cardLists[0].transform.parent = null;
+            cardLists[0].transform.position = new Vector3(0, -3, 0);
+            MatchCards(cardLists[0], tmpList);
             return;
         }
 
         GameObject currentList = cardLists[tempListId];
         int childCount = currentList.transform.childCount;
 
+        Destroy(cardLists[tempListId]);
         cardLists.RemoveAt(tempListId);
 
         for (int i = 0; i < childCount; i++)
@@ -93,11 +95,39 @@ public class CardManager : MonoBehaviour
         }
     }
 
+    private void MatchCards(GameObject fullList, GameObject emptyList)
+    {
+        while (fullList.transform.childCount > 0)
+        {
+            Card card1 = fullList.transform.GetChild(0).GetComponent<Card>();
+            Card card2 = fullList.transform.GetChild(fullList.transform.childCount - 1).GetComponent<Card>();
+
+            if (card1.CardId == card2.CardId)
+            {
+                GameObject newList = new GameObject();
+
+                newList.name = "CardMatch " + transform.childCount;
+                newList.transform.position = new Vector3(-1.6f + (transform.childCount % 5) * 0.8f, 5 - (transform.childCount / 5), 0);
+                newList.transform.SetParent(transform);
+
+                card1.transform.SetParent(newList.transform);
+                card2.transform.SetParent(newList.transform);
+                card1.transform.position = card1.transform.parent.position;
+                card2.transform.position = card2.transform.parent.position;
+            }
+            else
+            {
+                card1.transform.SetParent(emptyList.transform);
+                card2.transform.SetParent(emptyList.transform);
+            }
+        }
+    }
+
     IEnumerator Timer()
     {
         for (int i = 0; i < 10; i++)
         {
-            yield return new WaitForSeconds(3);
+            yield return new WaitForSeconds(1);
             SortCards();
         }
     }
