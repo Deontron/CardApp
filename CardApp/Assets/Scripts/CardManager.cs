@@ -7,10 +7,13 @@ public class CardManager : MonoBehaviour
     [SerializeField] List<Card> cards;
     [SerializeField] List<GameObject> cardLists = new List<GameObject>();
 
+    private int lastListId = 0;
+
     void Start()
     {
         ShuffleCards();
-        SortCards(26);
+        SetCards(26);
+        StartCoroutine(Timer());
     }
 
     void Update()
@@ -31,7 +34,7 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    private void SortCards(int nameNumber)
+    private void SetCards(int nameNumber)
     {
         if (cards.Count < nameNumber)
         {
@@ -42,6 +45,7 @@ public class CardManager : MonoBehaviour
         {
             GameObject newList = new GameObject();
             cardLists.Add(newList);
+            newList.transform.SetParent(transform);
             newList.name = "CardList " + i;
             newList.transform.position = new Vector3(-1.6f + (i % 5) * 0.8f, 5 - (i / 5), 0);
         }
@@ -51,6 +55,32 @@ public class CardManager : MonoBehaviour
             Card card = Instantiate(cards[i], Vector3.zero, Quaternion.identity);
             card.transform.SetParent(cardLists[i % nameNumber].transform);
             card.transform.position = card.transform.parent.position;
+            lastListId = i % nameNumber;
+        }
+    }
+
+    private void SortCards()
+    {
+        GameObject currentList = cardLists[lastListId];
+        int childCount = currentList.transform.childCount;
+
+        cardLists.RemoveAt(lastListId);
+
+        for (int i = 0; i < childCount; i++)
+        {
+            Transform tempList = currentList.transform.GetChild(0);
+            tempList.SetParent(cardLists[((i % cardLists.Count) + lastListId) % cardLists.Count].transform);
+            tempList.position = tempList.parent.position;
+            lastListId = i % cardLists.Count;
+        }
+    }
+
+    IEnumerator Timer()
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            yield return new WaitForSeconds(5);
+            SortCards();
         }
     }
 }
