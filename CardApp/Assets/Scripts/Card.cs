@@ -17,11 +17,26 @@ public class Card : MonoBehaviour
 
     void Start()
     {
-        
+
     }
 
-    void Update()
+    public void MoveCard(Vector3 targetPos)
     {
-        
+        Vector3 direction = targetPos - transform.position;
+        transform.Translate(direction * 0.2f);
+        if (Vector3.Distance(transform.position, targetPos) > 0.05f)
+        {
+            StartCoroutine(MoveTimer(targetPos));
+        }
+        else
+        {
+            transform.position = targetPos;
+        }
+    }
+
+    IEnumerator MoveTimer(Vector3 targetPos)
+    {
+        yield return new WaitForSeconds(0.05f);
+        MoveCard(targetPos);
     }
 }

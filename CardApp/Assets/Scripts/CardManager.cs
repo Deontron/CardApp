@@ -12,7 +12,7 @@ public class CardManager : MonoBehaviour
     void Start()
     {
         ShuffleCards();
-        SetCards(5);
+        SetCards(8);
         StartCoroutine(Timer());
     }
 
@@ -56,51 +56,62 @@ public class CardManager : MonoBehaviour
 
     private void SortCards()
     {
-        int tempListId = lastListId;
-
-        if (cardLists.Count == 2)
-        {
-            if (lastListId == 0)
-            {
-                tempListId = 1;
-            }
-            else
-            {
-                tempListId = 0;
-            }
-        }
-        else if (cardLists.Count < 2)
+        if (cardLists.Count < 2)
         {
             StopAllCoroutines();
-            GameObject tmpList = new GameObject();
-            cardLists.Add(tmpList);
+
             cardLists[0].transform.parent = null;
             cardLists[0].transform.position = new Vector3(0, -3, 0);
-            MatchCards(cardLists[0], tmpList);
+            StartCoroutine(Timer2(cardLists[0], 1));
             return;
         }
 
+        int tempListId = lastListId;
         GameObject currentList = cardLists[tempListId];
         int childCount = currentList.transform.childCount;
+        Transform tempCard;
 
         Destroy(cardLists[tempListId]);
         cardLists.RemoveAt(tempListId);
 
-        for (int i = 0; i < childCount; i++)
+        if (cardLists.Count < 2)
         {
-            Transform tempCard = currentList.transform.GetChild(0);
-            tempCard.SetParent(cardLists[((i % cardLists.Count) + tempListId) % cardLists.Count].transform);
-            tempCard.position = tempCard.parent.position;
-            lastListId = ((i % cardLists.Count) + tempListId) % cardLists.Count;
+            for (int i = 0; i < childCount; i++)
+            {
+                tempCard = currentList.transform.GetChild(0);
+                tempCard.SetParent(cardLists[(i + tempListId) % cardLists.Count].transform);
+                tempCard.GetComponent<Card>().MoveCard(tempCard.parent.position);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < childCount; i++)
+            {
+                tempCard = currentList.transform.GetChild(currentList.transform.childCount - 1);
+                tempCard.SetParent(cardLists[(i + tempListId) % cardLists.Count].transform);
+                tempCard.GetComponent<Card>().MoveCard(tempCard.parent.position);
+                lastListId = (i + tempListId) % cardLists.Count;
+            }
         }
     }
 
-    private void MatchCards(GameObject fullList, GameObject emptyList)
+    private void MatchCards(GameObject fullList, int counter)
     {
+        if (counter > 3)
+        {
+            return;
+        }
+
+        GameObject emptyList = new GameObject();
+        cardLists.Add(emptyList);
+
+        Card card1;
+        Card card2;
+
         while (fullList.transform.childCount > 0)
         {
-            Card card1 = fullList.transform.GetChild(0).GetComponent<Card>();
-            Card card2 = fullList.transform.GetChild(fullList.transform.childCount - 1).GetComponent<Card>();
+            card1 = fullList.transform.GetChild(0).GetComponent<Card>();
+            card2 = fullList.transform.GetChild(fullList.transform.childCount - 1).GetComponent<Card>();
 
             if (card1.CardId == card2.CardId)
             {
@@ -112,8 +123,9 @@ public class CardManager : MonoBehaviour
 
                 card1.transform.SetParent(newList.transform);
                 card2.transform.SetParent(newList.transform);
-                card1.transform.position = card1.transform.parent.position;
-                card2.transform.position = card2.transform.parent.position;
+                card1.GetComponent<Card>().MoveCard(card1.transform.parent.position);
+                card2.GetComponent<Card>().MoveCard(card2.transform.parent.position);
+
             }
             else
             {
@@ -121,14 +133,24 @@ public class CardManager : MonoBehaviour
                 card2.transform.SetParent(emptyList.transform);
             }
         }
+
+        StartCoroutine(Timer2(emptyList, counter + 1));
+        Destroy(fullList);
+        cardLists.Remove(fullList);
     }
 
     IEnumerator Timer()
     {
         for (int i = 0; i < 10; i++)
         {
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(5);
             SortCards();
         }
+    }
+
+    IEnumerator Timer2(GameObject fullList, int counter)
+    {
+        yield return new WaitForSeconds(1);
+        MatchCards(fullList, counter);
     }
 }
