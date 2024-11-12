@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7678474385813510998}
   - component: {fileID: 8751474750630704003}
+  - component: {fileID: 3295786862216533368}
   m_Layer: 0
   m_Name: Heart6
   m_TagString: Untagged
@@ -47,6 +48,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CardId: 6
   CardType: 2
+--- !u!65 &3295786862216533368
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4861552727146065331}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &7890775588307742092
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2707887534338175725}
   - component: {fileID: 2318490502502448848}
+  - component: {fileID: -5593111578676069689}
   m_Layer: 0
   m_Name: HeartK
   m_TagString: Untagged
@@ -47,6 +48,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CardId: 13
   CardType: 2
+--- !u!65 &-5593111578676069689
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 82693332785473119}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &4738146981382639463
 PrefabInstance:
   m_ObjectHideFlags: 0

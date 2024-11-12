@@ -20,6 +20,11 @@ public class Card : MonoBehaviour
 
     }
 
+    private void OnMouseDown()
+    {
+        TurnCard();
+    }
+
     public void TurnCard()
     {
         transform.GetChild(0).rotation = Quaternion.Euler(0, 180, 0);
