@@ -8,15 +8,14 @@ public class CardManager : MonoBehaviour
     [SerializeField] List<GameObject> cardLists = new List<GameObject>();
 
     private int lastListId = 0;
+    private int selectedCardCounter = 3;
 
     void Start()
     {
-        ShuffleCards();
-        SetCards(8);
-        StartCoroutine(Timer());
+        Application.targetFrameRate = 60;
     }
 
-    private void ShuffleCards()
+    public void ShuffleCards()
     {
         Card temp;
 
@@ -29,7 +28,7 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    private void SetCards(int nameNumber)
+    public void SetCards(int nameNumber)
     {
         if (cards.Count < nameNumber)
         {
@@ -53,14 +52,14 @@ public class CardManager : MonoBehaviour
             card.transform.position = newPos;
             lastListId = i % nameNumber;
         }
+
+        StartCoroutine(Timer());
     }
 
     private void SortCards()
     {
         if (cardLists.Count < 2)
         {
-            StopAllCoroutines();
-
             cardLists[0].transform.parent = null;
             for (int i = 0; cardLists[0].transform.childCount > i; i++)
             {
@@ -84,7 +83,9 @@ public class CardManager : MonoBehaviour
             {
                 tempCard = currentList.transform.GetChild(0);
                 tempCard.SetParent(cardLists[(i + tempListId) % cardLists.Count].transform);
-                tempCard.GetComponent<Card>().MoveCard(tempCard.parent.position, 1);
+                tempCard.GetComponent<Card>().MoveCard(new Vector3(tempCard.parent.position.x,
+                    tempCard.parent.position.y,
+                    tempCard.parent.GetChild(tempCard.parent.childCount - 2).position.z - 0.01f), 1);
             }
         }
         else
@@ -93,19 +94,26 @@ public class CardManager : MonoBehaviour
             {
                 tempCard = currentList.transform.GetChild(currentList.transform.childCount - 1);
                 tempCard.SetParent(cardLists[(i + tempListId) % cardLists.Count].transform);
-                tempCard.GetComponent<Card>().MoveCard(tempCard.parent.position, 1);
+                tempCard.GetComponent<Card>().MoveCard(new Vector3(tempCard.parent.position.x,
+                    tempCard.parent.position.y,
+                    tempCard.parent.GetChild(tempCard.parent.childCount - 2).position.z - 0.01f), 1);
                 lastListId = (i + tempListId) % cardLists.Count;
             }
         }
+
+        StartCoroutine(Timer());
     }
 
     private void MatchCards(GameObject fullList, int counter)
     {
         if (counter > 3)
         {
+            GetComponent<UIManager>().CloseMatchText();
             SpreadCards();
             return;
         }
+
+        GetComponent<UIManager>().UpdateMatchText(counter + ". tur");
 
         GameObject emptyList = new GameObject();
         cardLists.Add(emptyList);
@@ -123,7 +131,7 @@ public class CardManager : MonoBehaviour
                 GameObject newList = new GameObject();
 
                 newList.name = "CardMatch " + transform.childCount;
-                newList.transform.position = new Vector3(-1.6f + (transform.childCount % 5) * 0.8f, 4 - (transform.childCount / 5), 0);
+                newList.transform.position = new Vector3(-1.6f + (transform.childCount % 5) * 0.8f, 4 - (transform.childCount / 5) * 1.5f, 0);
                 newList.transform.SetParent(transform);
 
                 card1.transform.SetParent(newList.transform);
@@ -151,23 +159,58 @@ public class CardManager : MonoBehaviour
         {
             Vector3 newPos = new Vector3(4 + (i % 5) * 0.8f, 5 - (i / 5), 0);
             cardLists[0].transform.GetChild(i).GetComponent<Card>().MoveCard(newPos, 0.1f);
+            cardLists[0].transform.GetChild(i).GetComponent<Card>().canClick = true;
         }
 
         Camera.main.GetComponent<CameraScript>().Move(new Vector3(5.5f, 1, -12), 0.1f);
     }
 
+    public void SelectCard(Card card)
+    {
+        if (selectedCardCounter < 3)
+        {
+            card.transform.parent = null;
+            card.MoveCard(new Vector3(selectedCardCounter - 1, -3f, 0), 1);
+
+            if (selectedCardCounter == 2)
+            {
+                cardLists[0].SetActive(false);
+                Camera.main.GetComponent<CameraScript>().Move(new Vector3(0, 1, -10), 0.1f);
+            }
+            selectedCardCounter++;
+            return;
+        }
+
+        if (transform.childCount != 0)
+        {
+            card.transform.parent = null;
+            card.MoveCard(transform.GetChild(0).position + new Vector3(0, -0.5f, -0.2f), 1);
+            transform.GetChild(0).parent = null;
+        }
+
+        if (transform.childCount == 0)
+        {
+            selectedCardCounter = 0;
+            StartCoroutine(Timer3());
+            Camera.main.GetComponent<CameraScript>().Move(new Vector3(0, 1, -10), 0.1f);
+        }
+    }
+
     IEnumerator Timer()
     {
-        for (int i = 0; i < 10; i++)
-        {
-            yield return new WaitForSeconds(2);
-            SortCards();
-        }
+        yield return new WaitForSeconds(2);
+        SortCards();
     }
 
     IEnumerator Timer2(GameObject fullList, int counter)
     {
         yield return new WaitForSeconds(3);
         MatchCards(fullList, counter);
+    }
+
+    IEnumerator Timer3()
+    {
+        yield return new WaitForSeconds(3);
+        GetComponent<UIManager>().OpenAskPanel();
     }
 }

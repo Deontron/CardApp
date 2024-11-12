@@ -14,15 +14,24 @@ public class Card : MonoBehaviour
 
     public int CardId;
     public CardTypes CardType;
+    public bool canClick = false;
+    private bool isMoving = false;
+
+    private CardManager cardManager;
 
     void Start()
     {
-
+        cardManager = GameObject.FindGameObjectWithTag("CardManager").GetComponent<CardManager>();
     }
 
     private void OnMouseDown()
     {
-        TurnCard();
+        if (canClick && !isMoving)
+        {
+            cardManager.SelectCard(this);
+            TurnCard();
+            canClick = false;
+        }
     }
 
     public void TurnCard()
@@ -32,6 +41,7 @@ public class Card : MonoBehaviour
 
     public void MoveCard(Vector3 targetPos, float speed)
     {
+        isMoving = true;
         Vector3 direction = targetPos - transform.position;
         transform.Translate(direction * 0.1f * speed);
         if (Vector3.Distance(transform.position, targetPos) > 0.01f)
@@ -41,6 +51,7 @@ public class Card : MonoBehaviour
         else
         {
             transform.position = targetPos;
+            isMoving = false;
         }
     }
 
