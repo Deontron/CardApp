@@ -20,11 +20,16 @@ public class Card : MonoBehaviour
 
     }
 
-    public void MoveCard(Vector3 targetPos)
+    public void TurnCard()
+    {
+        transform.GetChild(0).rotation = Quaternion.Euler(0, 180, 0);
+    }
+
+    public void MoveCard(Vector3 targetPos, float speed)
     {
         Vector3 direction = targetPos - transform.position;
-        transform.Translate(direction * 0.2f);
-        if (Vector3.Distance(transform.position, targetPos) > 0.05f)
+        transform.Translate(direction * 0.1f * speed);
+        if (Vector3.Distance(transform.position, targetPos) > 0.01f)
         {
             StartCoroutine(MoveTimer(targetPos));
         }
@@ -36,7 +41,7 @@ public class Card : MonoBehaviour
 
     IEnumerator MoveTimer(Vector3 targetPos)
     {
-        yield return new WaitForSeconds(0.05f);
-        MoveCard(targetPos);
+        yield return new WaitForSeconds(0.03f);
+        MoveCard(targetPos, 1);
     }
 }

@@ -42,14 +42,15 @@ public class CardManager : MonoBehaviour
             cardLists.Add(newList);
             newList.transform.SetParent(transform);
             newList.name = "CardList " + i;
-            newList.transform.position = new Vector3(-1.6f + (i % 5) * 0.8f, 5 - (i / 5), 0);
+            newList.transform.position = new Vector3(-1.6f + (i % 5) * 0.8f, 4 - (i / 5), 0);
         }
 
         for (int i = 0; i < cards.Count; i++)
         {
             Card card = Instantiate(cards[i], Vector3.zero, Quaternion.identity);
             card.transform.SetParent(cardLists[i % nameNumber].transform);
-            card.transform.position = card.transform.parent.position;
+            Vector3 newPos = new Vector3(card.transform.parent.position.x, card.transform.parent.position.y, card.transform.parent.position.z - (i * 0.01f));
+            card.transform.position = newPos;
             lastListId = i % nameNumber;
         }
     }
@@ -61,7 +62,10 @@ public class CardManager : MonoBehaviour
             StopAllCoroutines();
 
             cardLists[0].transform.parent = null;
-            cardLists[0].transform.position = new Vector3(0, -3, 0);
+            for (int i = 0; cardLists[0].transform.childCount > i; i++)
+            {
+                cardLists[0].transform.GetChild(i).GetComponent<Card>().MoveCard(new Vector3(0, -3, 0 - (i * 0.01f)), 3);
+            }
             StartCoroutine(Timer2(cardLists[0], 1));
             return;
         }
@@ -80,7 +84,7 @@ public class CardManager : MonoBehaviour
             {
                 tempCard = currentList.transform.GetChild(0);
                 tempCard.SetParent(cardLists[(i + tempListId) % cardLists.Count].transform);
-                tempCard.GetComponent<Card>().MoveCard(tempCard.parent.position);
+                tempCard.GetComponent<Card>().MoveCard(tempCard.parent.position, 1);
             }
         }
         else
@@ -89,7 +93,7 @@ public class CardManager : MonoBehaviour
             {
                 tempCard = currentList.transform.GetChild(currentList.transform.childCount - 1);
                 tempCard.SetParent(cardLists[(i + tempListId) % cardLists.Count].transform);
-                tempCard.GetComponent<Card>().MoveCard(tempCard.parent.position);
+                tempCard.GetComponent<Card>().MoveCard(tempCard.parent.position, 1);
                 lastListId = (i + tempListId) % cardLists.Count;
             }
         }
@@ -118,14 +122,15 @@ public class CardManager : MonoBehaviour
                 GameObject newList = new GameObject();
 
                 newList.name = "CardMatch " + transform.childCount;
-                newList.transform.position = new Vector3(-1.6f + (transform.childCount % 5) * 0.8f, 5 - (transform.childCount / 5), 0);
+                newList.transform.position = new Vector3(-1.6f + (transform.childCount % 5) * 0.8f, 4 - (transform.childCount / 5), 0);
                 newList.transform.SetParent(transform);
 
                 card1.transform.SetParent(newList.transform);
                 card2.transform.SetParent(newList.transform);
-                card1.GetComponent<Card>().MoveCard(card1.transform.parent.position);
-                card2.GetComponent<Card>().MoveCard(card2.transform.parent.position);
-
+                card1.GetComponent<Card>().TurnCard();
+                card2.GetComponent<Card>().TurnCard();
+                card2.GetComponent<Card>().MoveCard(card2.transform.parent.position - Vector3.left * 0.1f, 1);
+                card1.GetComponent<Card>().MoveCard(card1.transform.parent.position - Vector3.forward * 0.1f, 1);
             }
             else
             {
@@ -143,14 +148,14 @@ public class CardManager : MonoBehaviour
     {
         for (int i = 0; i < 10; i++)
         {
-            yield return new WaitForSeconds(5);
+            yield return new WaitForSeconds(2);
             SortCards();
         }
     }
 
     IEnumerator Timer2(GameObject fullList, int counter)
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(3);
         MatchCards(fullList, counter);
     }
 }
