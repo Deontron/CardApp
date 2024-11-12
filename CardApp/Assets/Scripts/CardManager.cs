@@ -103,6 +103,7 @@ public class CardManager : MonoBehaviour
     {
         if (counter > 3)
         {
+            SpreadCards();
             return;
         }
 
@@ -142,6 +143,17 @@ public class CardManager : MonoBehaviour
         StartCoroutine(Timer2(emptyList, counter + 1));
         Destroy(fullList);
         cardLists.Remove(fullList);
+    }
+
+    private void SpreadCards()
+    {
+        for (int i = 0; i < cardLists[0].transform.childCount; i++)
+        {
+            Vector3 newPos = new Vector3(4 + (i % 5) * 0.8f, 5 - (i / 5), 0);
+            cardLists[0].transform.GetChild(i).GetComponent<Card>().MoveCard(newPos, 0.1f);
+        }
+
+        Camera.main.GetComponent<CameraScript>().Move(new Vector3(5.5f, 1, -12), 0.1f);
     }
 
     IEnumerator Timer()
