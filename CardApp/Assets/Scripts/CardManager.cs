@@ -85,7 +85,7 @@ public class CardManager : MonoBehaviour
                 tempCard.SetParent(cardLists[(i + tempListId) % cardLists.Count].transform);
                 tempCard.GetComponent<Card>().MoveCard(new Vector3(tempCard.parent.position.x,
                     tempCard.parent.position.y,
-                    tempCard.parent.GetChild(tempCard.parent.childCount - 2).position.z - 0.01f), 1);
+                    tempCard.parent.GetChild(tempCard.parent.childCount - 2).position.z - 0.1f), 1);
             }
         }
         else
@@ -96,7 +96,7 @@ public class CardManager : MonoBehaviour
                 tempCard.SetParent(cardLists[(i + tempListId) % cardLists.Count].transform);
                 tempCard.GetComponent<Card>().MoveCard(new Vector3(tempCard.parent.position.x,
                     tempCard.parent.position.y,
-                    tempCard.parent.GetChild(tempCard.parent.childCount - 2).position.z - 0.01f), 1);
+                    (tempCard.parent.GetChild(tempCard.parent.childCount - 2).position.z - 0.1f)), 1);
                 lastListId = (i + tempListId) % cardLists.Count;
             }
         }
@@ -157,12 +157,12 @@ public class CardManager : MonoBehaviour
     {
         for (int i = 0; i < cardLists[0].transform.childCount; i++)
         {
-            Vector3 newPos = new Vector3(4 + (i % 5) * 0.8f, 5 - (i / 5), 0);
+            Vector3 newPos = new Vector3(6.5f + (i % 5) * 0.8f, 5 - (i / 5), 0);
             cardLists[0].transform.GetChild(i).GetComponent<Card>().MoveCard(newPos, 0.1f);
             cardLists[0].transform.GetChild(i).GetComponent<Card>().canClick = true;
         }
 
-        Camera.main.GetComponent<CameraScript>().Move(new Vector3(5.5f, 1, -12), 0.1f);
+        Camera.main.GetComponent<CameraScript>().Move(new Vector3(8f, 1, -10), 0.1f);
     }
 
     public void SelectCard(Card card)

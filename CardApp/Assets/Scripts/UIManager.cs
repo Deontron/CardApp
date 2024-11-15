@@ -72,7 +72,7 @@ public class UIManager : MonoBehaviour
 
     public void YesButton()
     {
-        Camera.main.GetComponent<CameraScript>().Move(new Vector3(5.5f, 1, -12), 0.1f);
+        Camera.main.GetComponent<CameraScript>().Move(new Vector3(8f, 1, -10), 0.1f);
         CloseAskPanel();
     }
 
