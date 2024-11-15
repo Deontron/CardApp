@@ -131,7 +131,7 @@ public class CardManager : MonoBehaviour
                 GameObject newList = new GameObject();
 
                 newList.name = "CardMatch " + transform.childCount;
-                newList.transform.position = new Vector3(-1.6f + (transform.childCount % 5) * 0.8f, 4 - (transform.childCount / 5) * 1.5f, 0);
+                newList.transform.position = new Vector3(-1.6f + (transform.childCount % 5) * 0.8f, 4 - ((transform.childCount / 5) * 1.5f), 0);
                 newList.transform.SetParent(transform);
 
                 card1.transform.SetParent(newList.transform);
@@ -170,12 +170,12 @@ public class CardManager : MonoBehaviour
         if (selectedCardCounter < 3)
         {
             card.transform.parent = null;
-            card.MoveCard(new Vector3(selectedCardCounter - 1, -3f, 0), 1);
+            card.DelayedMove(new Vector3(selectedCardCounter - 1, -3f, 0), 1);
 
             if (selectedCardCounter == 2)
             {
                 cardLists[0].SetActive(false);
-                Camera.main.GetComponent<CameraScript>().Move(new Vector3(0, 1, -10), 0.1f);
+                Camera.main.GetComponent<CameraScript>().DelayedMove(new Vector3(0, 1, -10), 0.1f);
             }
             selectedCardCounter++;
             return;
@@ -184,15 +184,16 @@ public class CardManager : MonoBehaviour
         if (transform.childCount != 0)
         {
             card.transform.parent = null;
-            card.MoveCard(transform.GetChild(0).position + new Vector3(0, -0.5f, -0.2f), 1);
+            card.DelayedMove(transform.GetChild(0).position + new Vector3(0, -0.5f, -0.2f), 1);
             transform.GetChild(0).parent = null;
         }
 
         if (transform.childCount == 0)
         {
+            cardLists[0].SetActive(false);
             selectedCardCounter = 0;
             StartCoroutine(Timer3());
-            Camera.main.GetComponent<CameraScript>().Move(new Vector3(0, 1, -10), 0.1f);
+            Camera.main.GetComponent<CameraScript>().DelayedMove(new Vector3(0, 1, -10), 0.1f);
         }
     }
 
@@ -211,6 +212,7 @@ public class CardManager : MonoBehaviour
     IEnumerator Timer3()
     {
         yield return new WaitForSeconds(3);
+        cardLists[0].SetActive(true);
         GetComponent<UIManager>().OpenAskPanel();
     }
 }

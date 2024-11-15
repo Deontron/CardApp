@@ -25,9 +25,20 @@ public class CameraScript : MonoBehaviour
         Movement(targetPos, speed);
     }
 
+    public void DelayedMove(Vector3 targetPos, float speed)
+    {
+        StartCoroutine(DelayedMoveTimer(targetPos, speed));
+    }
+
     IEnumerator MoveTimer(Vector3 targetPos)
     {
         yield return new WaitForSeconds(0.03f);
         Movement(targetPos, 1);
+    }
+
+    IEnumerator DelayedMoveTimer(Vector3 targetPos, float speed)
+    {
+        yield return new WaitForSeconds(1.5f);
+        Move(targetPos, speed);
     }
 }
