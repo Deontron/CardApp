@@ -126,5 +126,6 @@ public class UIManager : MonoBehaviour
     public void InfoBackButton()
     {
         infoPanel.SetActive(false);
+        MenuBackButton();
     }
 }

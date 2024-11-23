@@ -135,7 +135,7 @@ public class CardManager : MonoBehaviour
 
                 newList.name = "CardMatch " + counter + "_" + (currentRow * maxCardsPerRow + cardsInCurrentRow);
 
-                float xPosition = -1.6f + cardsInCurrentRow * 0.8f; 
+                float xPosition = -1.8f + cardsInCurrentRow * 0.9f; 
                 float yPosition = 6 - counter * 1.5f - currentRow * 1.5f;
 
                 newList.transform.position = new Vector3(xPosition, yPosition, 0);
