@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -11,9 +12,15 @@ public class UIManager : MonoBehaviour
     public TMP_Text matchText;
     public GameObject enterPanel;
     public GameObject askPanel;
+    public GameObject menuButton;
+    public GameObject menuPanel;
+    public GameObject infoPanel;
+
+    public bool isMenuPanelActive = false;
 
     private CardManager cardManager;
     private int shufflecounter = 0;
+    private bool isPlaying = false;
     void Start()
     {
         cardManager = GetComponent<CardManager>();
@@ -21,6 +28,13 @@ public class UIManager : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (isPlaying)
+            {
+                MenuButton();
+            }
+        }
     }
 
     public void EnterButton()
@@ -30,6 +44,8 @@ public class UIManager : MonoBehaviour
             inputField.text = inputField.text.Replace(" ", "");
             cardManager.SetCards(inputField.text.Count());
             enterPanel.SetActive(false);
+            menuButton.SetActive(true);
+            isPlaying = true;
         }
         else
         {
@@ -79,5 +95,36 @@ public class UIManager : MonoBehaviour
     public void NoButton()
     {
         CloseAskPanel();
+    }
+
+    public void MenuButton()
+    {
+        menuPanel.SetActive(true);
+        isMenuPanelActive = true;
+        menuButton.SetActive(false);
+        Time.timeScale = 0;
+    }
+    public void MenuBackButton()
+    {
+        menuPanel.SetActive(false);
+        isMenuPanelActive = false;
+        menuButton.SetActive(true);
+        Time.timeScale = 1;
+    }
+
+    public void RestartButton()
+    {
+        Time.timeScale = 1;
+        SceneManager.LoadScene(0);
+    }
+
+    public void InfoButton()
+    {
+        infoPanel.SetActive(true);
+    }
+
+    public void InfoBackButton()
+    {
+        infoPanel.SetActive(false);
     }
 }

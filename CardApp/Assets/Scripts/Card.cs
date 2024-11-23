@@ -18,15 +18,17 @@ public class Card : MonoBehaviour
     private bool isMoving = false;
 
     private CardManager cardManager;
+    private UIManager uiManager;
 
     void Start()
     {
         cardManager = GameObject.FindGameObjectWithTag("CardManager").GetComponent<CardManager>();
+        uiManager = cardManager.gameObject.GetComponent<UIManager>();
     }
 
     private void OnMouseDown()
     {
-        if (canClick && !isMoving)
+        if (canClick && !isMoving && !uiManager.isMenuPanelActive)
         {
             cardManager.SelectCard(this);
             StartCoroutine(TurnTimer());
